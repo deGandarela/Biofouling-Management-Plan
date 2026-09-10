@@ -46,6 +46,13 @@
                 <h1 class="text-2xl font-black text-teal-950 tracking-tight mt-1">Biofouling Management Plan Generator</h1>
                 <p class="text-sm text-slate-500 mt-0.5">Interoperable digital compliance framework and asset record engine.</p>
             </div>
+            <!-- Import Action Button -->
+            <div class="shrink-0 no-print">
+                <input type="file" id="importFile" accept=".json" class="hidden" onchange="importPlanState(event)">
+                <button type="button" onclick="document.getElementById('importFile').click();" class="bg-teal-100 hover:bg-teal-200 text-teal-900 border border-teal-300 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors shadow-sm no-print">
+                    📂 Load Previous Plan
+                </button>
+            </div>
         </header>
         <!-- Form Navigation Tab Header Bar -->
         <nav class="flex border-b border-slate-200 mb-8 overflow-x-auto text-sm font-semibold text-slate-400 no-print">
@@ -346,7 +353,10 @@
                             <label class="flex items-center space-x-2 p-1.5 border border-slate-200 rounded-md hover:bg-slate-50"><input type="checkbox" class="niche-check" value="engine cooling system"> <span>engine cooling system</span></label>
                             <label class="flex items-center space-x-2 p-1.5 border border-slate-200 rounded-md hover:bg-slate-50"><input type="checkbox" class="niche-check" value="fire-fighting system"> <span>fire-fighting system</span></label>
                             <label class="flex items-center space-x-2 p-1.5 border border-slate-200 rounded-md hover:bg-slate-50"><input type="checkbox" class="niche-check" value="auxiliary service system"> <span>auxiliary service system</span></label>
-                            <label class="flex items-center space-x-2 p-1.5 border border-slate-200 rounded-md hover:bg-slate-50"><input type="checkbox" class="niche-check" value="others"> <span>others</span></label>
+                            <label class="flex items-center space-x-2 p-1.5 border border-slate-200 rounded-md hover:bg-slate-50" onclick="toggleOtherCheckboxWrap('chkMgpsAreaOther', 'mgpsAreaOtherWrap')"><input type="checkbox" id="chkMgpsAreaOther" class="mgps-applied-area" value="Other"> <span>Other</span></label>
+                        </div>
+                        <div id="mgpsAreaOtherWrap" class="hidden mt-2 max-w-md">
+                            <input type="text" id="mgpsAreaOther" class="w-full border border-slate-300 rounded px-2 py-1 text-xs" placeholder="Specify other MGPS application area...">
                         </div>
                     </div>
                 </div>
@@ -811,7 +821,7 @@
                         </div>
                         <div class="p-2.5 bg-white border border-slate-200 rounded-lg space-y-1">
                             <span class="font-bold text-teal-900 block">2. Mandatory Framework &amp; GBS (PPR 13/5, 13/5/1, 13/5/2)</span>
-                            <p class="text-slate-600 text-[11px]">Norway &amp; Japan propose binding Goal-Based Standards. PPR 13/5/2 (Reg 24) establishes a mandatory MGPS benchmark: maintain <strong>Biofouling Rating &le; 1 for &ge; 1 year</strong> while controlling noise pollution and coating compatibility[cite: 3].</p>
+                            <p class="text-slate-600 text-[11px]">Norway &amp; Japan propose binding Goal-Based Standards. PPR 13/5/2 (Reg 24) establishes a mandatory MGPS benchmark: maintain <strong>Biofouling Rating &le; 1 for &ge; 1 year</strong> while controlling noise pollution and coating compatibility.</p>
                         </div>
                         <div class="p-2.5 bg-white border border-slate-200 rounded-lg space-y-1">
                             <span class="font-bold text-teal-900 block">3. Lifecycle Control Points (Canada PPR 13/5/6 &amp; INF.8)</span>
@@ -819,7 +829,7 @@
                         </div>
                         <div class="p-2.5 bg-white border border-slate-200 rounded-lg space-y-1">
                             <span class="font-bold text-teal-900 block">4. MARPOL Annex VI &amp; Decarbonization (PPR 13/5/1, PPR 12/INF.7)</span>
-                            <p class="text-slate-600 text-[11px]">BIMCO/GloFouling data proves <strong>0.5mm microfouling increases fuel/GHG emissions by 25–30%</strong>. Continuous ultrasonic anti-fouling directly serves as an Annex VI SEEMP decarbonization measure[cite: 2].</p>
+                            <p class="text-slate-600 text-[11px]">BIMCO/GloFouling data proves <strong>0.5mm microfouling increases fuel/GHG emissions by 25–30%</strong>. Continuous ultrasonic anti-fouling directly serves as an Annex VI SEEMP decarbonization measure.</p>
                         </div>
                         <div class="p-2.5 bg-white border border-slate-200 rounded-lg space-y-1">
                             <span class="font-bold text-teal-900 block">5. IWC Toxic Effluent &amp; Unmeasurable Capture (PPR 13/INF.16, PPR 13/5/4)</span>
@@ -850,6 +860,9 @@
                         </button>
                         <button type="button" onclick="clearFormState();" class="w-full mt-3 py-2 px-4 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg text-xs transition-colors shadow-sm flex items-center justify-center gap-2">
                             <span>🔄 Clear All Data & Start Fresh</span>
+                        </button>
+                        <button type="button" onclick="exportPlanState();" class="w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-900 text-white font-semibold rounded-lg text-xs transition-colors shadow-md flex items-center justify-center gap-2 mt-3">
+                            <span>💾 Save Editable Project File (.json)</span>
                         </button>
                     </div>
                     <!-- Regulatory Framework Tag -->
@@ -1233,6 +1246,47 @@
             localStorage.removeItem('shipsonic_bfmp_state');
             location.reload();
         }
+    }
+
+    // --- IMPORT / EXPORT LOGIC ---
+    function exportPlanState() {
+        saveState(); 
+        const stateData = localStorage.getItem('shipsonic_bfmp_state');
+        if (!stateData) return alert("No data to save. Please fill out the form first.");
+
+        const vesselName = domCache.inputs['vesselName'] ? domCache.inputs['vesselName'].value.replace(/\s+/g, '_') : 'Unknown_Vessel';
+        const blob = new Blob([stateData], { type: "application/json" });
+        const link = document.createElement("a");
+        
+        link.href = URL.createObjectURL(blob);
+        link.download = `BFMP_Project_${vesselName}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function importPlanState(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const importedState = JSON.parse(e.target.result);
+                if (!importedState.inputs || !importedState.checkboxes) {
+                    throw new Error("Invalid file structure");
+                }
+                localStorage.setItem('shipsonic_bfmp_state', JSON.stringify(importedState));
+                restoreState();
+                updateBindings();
+                alert("Plan loaded successfully!");
+                document.getElementById('importFile').value = ''; 
+            } catch (err) {
+                console.error(err);
+                alert("Error loading file. Please ensure it is a valid Shipsonic .json project file.");
+            }
+        };
+        reader.readAsText(file);
     }
 
     // --- CORE LOGIC ---
@@ -1769,7 +1823,6 @@
         // 4. Run initial bindings to set the preview frame
         updateBindings();
     };
-</script>
     </script>
 </body>
 </html>
