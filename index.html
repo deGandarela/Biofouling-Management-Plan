@@ -1523,7 +1523,7 @@ function updateLiveSummary() {
     // Unprotected Niches & Lead Gen Trigger Logic
     const checkedNiches = Array.from(document.querySelectorAll('.niche-check:checked')).map(el => el.value);
     const mgpsTable = document.getElementById('mgps-form-body');
-    const hasMGPS = mgpsTable.querySelectorAll('tr').length > 0 && !mgpsTable.innerHTML.includes('No entries recorded');
+    const hasMGPS = mgpsTable && mgpsTable.querySelectorAll('tr').length > 0 && !mgpsTable.innerHTML.includes('No entries recorded');
     
     const unprotectedEl = document.getElementById('sidebar-unprotected');
     const leadGenEl = document.getElementById('sidebar-lead-gen');
