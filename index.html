@@ -1474,22 +1474,80 @@
         }
     }
 
-    // --- LIVE SIDEBAR SUMMARY UPDATES ---
-    function updateLiveSummary() {
-        // Vessel Update
-        const vName = domCache.inputs['vesselName'] ? domCache.inputs['vesselName'].value : '';
-        document.getElementById('sidebar-vessel').innerText = vName || '—';
+   // --- LIVE SIDEBAR SUMMARY UPDATES ---
+function updateLiveSummary() {
+    // Vessel Update
+    const vName = domCache.inputs['vesselName'] ? domCache.inputs['vesselName'].value : '';
+    document.getElementById('sidebar-vessel').innerText = vName || '—';
 
-        // Risk Profile Calculation (Based on laytime)
-        const laytime = parseInt(domCache.inputs['inservicePeriod']?.value) || 0;
-        const riskEl = document.getElementById('sidebar-risk');
-        if (laytime > 14) {
-            riskEl.innerText = "High Risk (Extended Laytime)";
-            riskEl.className = "font-bold text-sm text-red-600 mt-0.5";
+    // MULTI-VARIABLE RISK PROFILE CALCULATION
+    const laytime = parseInt(domCache.inputs['inservicePeriod']?.value) || 0;
+    const speed = parseFloat(domCache.inputs['operatingSpeed']?.value) || 0;
+    const climate = domCache.inputs['typicalClimateZones']?.value || '';
+    const salinity = domCache.inputs['typicalSalinities']?.value || '';
+    
+    let riskScore = 0;
+    let riskFactors = [];
+
+    // 1. Laytime Factor (Heaviest Weight)
+    if (laytime > 21) { riskScore += 3; riskFactors.push("Prolonged Idle Time"); }
+    else if (laytime > 14) { riskScore += 2; riskFactors.push("Extended Laytime"); }
+    else if (laytime >= 7) { riskScore += 1; }
+
+    // 2. Climate Factor (Temperature)
+    if (climate === 'tropical') { riskScore += 2; riskFactors.push("Warm Water"); }
+    else if (climate === 'semi-temperate' || climate === 'Temperate') { riskScore += 1; }
+
+    // 3. Speed Factor (Slower = Higher Attachment Risk)
+    if (speed > 0 && speed < 12) { riskScore += 2; riskFactors.push("Slow Transit Speed"); }
+
+    // 4. Salinity Factor
+    if (salinity === 'marine water') { riskScore += 1; }
+
+    // Evaluate Final Score
+    const riskEl = document.getElementById('sidebar-risk');
+    if (laytime === 0 && speed === 0) {
+        riskEl.innerText = "Awaiting Data...";
+        riskEl.className = "font-semibold text-sm text-slate-400 mt-0.5";
+    } else if (riskScore >= 5) {
+        riskEl.innerText = `Critical Risk (${riskFactors.join(', ')})`;
+        riskEl.className = "font-bold text-sm text-red-700 mt-0.5";
+    } else if (riskScore >= 3) {
+        riskEl.innerText = `High Risk (${riskFactors[0] || 'Elevated Factors'})`;
+        riskEl.className = "font-bold text-sm text-amber-600 mt-0.5";
+    } else {
+        riskEl.innerText = "Low Risk (Standard Profile)";
+        riskEl.className = "font-bold text-sm text-green-600 mt-0.5";
+    }
+
+    // Unprotected Niches & Lead Gen Trigger Logic
+    const checkedNiches = Array.from(document.querySelectorAll('.niche-check:checked')).map(el => el.value);
+    const mgpsTable = document.getElementById('mgps-form-body');
+    const hasMGPS = mgpsTable.querySelectorAll('tr').length > 0 && !mgpsTable.innerHTML.includes('No entries recorded');
+    
+    const unprotectedEl = document.getElementById('sidebar-unprotected');
+    const leadGenEl = document.getElementById('sidebar-lead-gen');
+    
+    if (checkedNiches.length > 0 && !hasMGPS) {
+        // Find vulnerable niches currently without generic MGPS hardware coverage
+        const criticalNiches = checkedNiches.filter(n => ['sea chests', 'box coolers', 'sea inlet pipes', 'tunnel grates', 'bow thruster tunnel'].includes(n.toLowerCase()));
+        
+        if (criticalNiches.length > 0) {
+            unprotectedEl.innerHTML = criticalNiches.map(n => `<li>${n}</li>`).join('');
+            leadGenEl.classList.remove('hidden');
+            
+            // Dynamically update the Mailto trigger
+            const mailto = `mailto:busdev@shipsonic.com?subject=MGPS Hardware Quote Request - ${vName || 'Vessel'}&body=Hello Shipsonic Team,%0D%0A%0D%0AWe are currently drafting our Biofouling Management Plan and have identified unprotected vulnerable niche areas (%0D%0A${criticalNiches.join(', ')}).%0D%0A%0D%0APlease provide information and a quote for suitable ultrasonic transducers.%0D%0A%0D%0AThank you.`;
+            document.getElementById('btn-request-quote').href = mailto;
         } else {
-            riskEl.innerText = "Low Risk";
-            riskEl.className = "font-bold text-sm text-green-600 mt-0.5";
+            unprotectedEl.innerHTML = `<li class="text-slate-500 font-normal">No critical unprotected areas.</li>`;
+            leadGenEl.classList.add('hidden');
         }
+    } else {
+        unprotectedEl.innerHTML = `<li class="text-slate-500 font-normal">None detected.</li>`;
+        leadGenEl.classList.add('hidden');
+    }
+}
 
         // Unprotected Niches & Lead Gen Trigger Logic
         const checkedNiches = Array.from(document.querySelectorAll('.niche-check:checked')).map(el => el.value);
