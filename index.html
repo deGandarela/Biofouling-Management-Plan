@@ -55,7 +55,7 @@
             <div>
                 <div class="flex items-center gap-2 flex-wrap">
                     <span class="text-xs font-black bg-teal-950 text-white px-2 py-0.5 rounded tracking-wider">SHIPSONIC BIOFOULING INTELLIGENCE &amp; COMPLIANCE</span>
-                    <span class="text-xs font-bold bg-blue-100 text-blue-800 px-2 py-0.5 rounded">IMO MEPC.378(80) / PPR 13 Mandatory Framework / NORMAM-401 / ISO 20679 / AMPP Guide 21517-2025 / BEMA BRADD Data Framework Aligned</span>
+                    <span class="text-xs font-bold bg-blue-100 text-blue-800 px-2 py-0.5 rounded">IMO MEPC.378(80) Guidance / NORMAM-401 / ISO 20679 / AMPP Guide 21517-2025 / BEMA BRADD Data Framework</span>
                 </div>
                 <h1 class="text-2xl font-black text-teal-950 tracking-tight mt-1">Biofouling Management Plan Generator</h1>
                 <p class="text-sm text-slate-500 mt-0.5">Interoperable digital compliance framework and asset record engine.</p>
@@ -117,6 +117,7 @@
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 mb-1">Vessel Type</label>
                             <select id="vesselType" class="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                                <option value="" selected disabled>Select vessel type...</option>
                                 <optgroup label="MARPOL / EEDI Statutory Framework">
                                     <option value="Bulk Carrier">Bulk Carrier</option>
                                     <option value="Gas Carrier">Gas Carrier (LPG / Ammonia)</option>
@@ -232,26 +233,7 @@
                                         <th class="p-2 text-center w-12 border-b border-slate-200">Action</th>
                                     </tr>
                                 </thead>
-                                <tbody id="revision-form-body">
-                                    <tr>
-                                        <td class="p-2 border-b border-slate-200">2024-01-15</td>
-                                        <td class="p-2 border-b border-slate-200">Capt. J. Smith (DPA)</td>
-                                        <td class="p-2 border-b border-slate-200">Initial Document Creation</td>
-                                        <td class="p-2 text-center border-b border-slate-200 no-print"><button type="button" class="text-red-600 font-bold" onclick="removeRevisionRow(this)">X</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-2 border-b border-slate-200">2024-08-20</td>
-                                        <td class="p-2 border-b border-slate-200">Chief Officer M. Taylor</td>
-                                        <td class="p-2 border-b border-slate-200">Section 3 Coating System Updates</td>
-                                        <td class="p-2 text-center border-b border-slate-200 no-print"><button type="button" class="text-red-600 font-bold" onclick="removeRevisionRow(this)">X</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-2 border-b border-slate-200">2025-02-10</td>
-                                        <td class="p-2 border-b border-slate-200">Technical Superintendent R. Vance</td>
-                                        <td class="p-2 border-b border-slate-200">Post Dry-docking Review &amp; Niche Mapping</td>
-                                        <td class="p-2 text-center border-b border-slate-200 no-print"><button type="button" class="text-red-600 font-bold" onclick="removeRevisionRow(this)">X</button></td>
-                                    </tr>
-                                </tbody>
+                                <tbody id="revision-form-body"></tbody>
                             </table>
                         </div>
                     </div>
@@ -555,6 +537,7 @@
                             <label class="block text-xs font-bold uppercase text-slate-700 mb-2">Upload Anti-Fouling Coating Records / Certificates (Supports Multiple Files)</label>
                             <input type="file" id="afcFiles" multiple onchange="handleAfcFiles(this)" class="w-full border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none bg-white">
                         </div>
+                        <p class="text-[11px] text-slate-600 mt-2">Add each coating to the log below. A complete, unadded entry will also be recorded when exporting the PDF.</p>
                         <button type="button" onclick="addAfcRecord()" class="mt-4 px-5 py-2.5 bg-teal-800 hover:bg-teal-900 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm">Add Coating Layer Record</button>
                         
                         <div class="mt-4 overflow-x-auto">
@@ -706,6 +689,7 @@
                             <label class="block text-xs font-bold uppercase text-slate-700 mb-2">Upload MGPS Documentation / Technical Specifications (Supports Multiple Files)</label>
                             <input type="file" id="mgpsFiles" multiple onchange="handleMgpsFiles(this)" class="w-full border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none bg-white">
                         </div>
+                        <p class="text-[11px] text-slate-600 mt-2">Add each MGPS to the log below. A pending entry will also be recorded when exporting the PDF.</p>
                         <button type="button" onclick="addMgpsRecord()" class="mt-4 px-5 py-2.5 bg-teal-800 hover:bg-teal-900 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm">Add MGPS Hardware Log</button>
                         
                         <div class="mt-4 overflow-x-auto">
@@ -794,7 +778,7 @@
                     </div>
                     <div id="brazilRiskBanner" class="hidden p-4 bg-amber-50 border border-amber-300 text-amber-900 rounded-xl text-sm space-y-1">
                         <strong class="block uppercase font-bold text-amber-950">⚠️ NORMAM-401/DPC Regulatory Action Required</strong>
-                        <p>A biofouling rating of 2 or higher requires active cleaning before navigating between distinct Brazilian biogeographic regions. In-water cleaning operations require waste capture and approval requests submitted to local authorities at least 10 days in advance.</p>
+                        <p>Rating 2 or higher warrants a review of applicable NORMAM-401 requirements when entering Brazilian waters or moving between Brazilian biogeographic regions. Inspection, corrective action and any in-water cleaning must follow current local authorization, timing and waste-capture requirements.</p>
                     </div>
                     <div class="space-y-4">
                         <div>
@@ -812,11 +796,11 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
                             <div class="p-3 bg-white border border-slate-200 rounded-lg space-y-1">
                                 <span class="font-bold text-teal-900 block">1. Statutory Baseline (MEPC.378(80) &amp; ISO 20679)</span>
-                                <p class="text-slate-600 text-[11px]">Resolution MEPC.378(80) mandates ship-specific BFMP &amp; Biofouling Record Books (BFRB). Aligns survey criteria with ISO 20679:2025 to standardise Biofouling Rating assessments (0–4) across hull &amp; niche areas.</p>
+                                <p class="text-slate-600 text-[11px]">Resolution MEPC.378(80) recommends maintaining a ship-specific BFMP and Biofouling Record Book (BFRB). Check the applicable national requirements and inspection guidance for the vessel and its operating areas.</p>
                             </div>
                             <div class="p-3 bg-white border border-slate-200 rounded-lg space-y-1">
-                                <span class="font-bold text-teal-900 block">2. Mandatory Framework &amp; GBS (PPR 13/5, 13/5/1, 13/5/2)</span>
-                                <p class="text-slate-600 text-[11px]">Norway &amp; Japan propose binding Goal-Based Standards. PPR 13/5/2 (Reg 24) establishes a mandatory MGPS benchmark: maintain <strong>Biofouling Rating &le; 1 for &ge; 1 year</strong> while controlling noise pollution and coating compatibility.</p>
+                                <span class="font-bold text-teal-900 block">2. Proposals for Future Mandatory Framework &amp; GBS (PPR 13/5, 13/5/1, 13/5/2)</span>
+                                <p class="text-slate-600 text-[11px]">Proposals under discussion explore binding Goal-Based Standards, including potential performance benchmarks and consideration of noise and coating compatibility. A submitted proposal is not itself an adopted mandatory requirement.</p>
                             </div>
                             <div class="p-3 bg-white border border-slate-200 rounded-lg space-y-1">
                                 <span class="font-bold text-teal-900 block">3. Lifecycle Control Points (Canada PPR 13/5/6 &amp; INF.8)</span>
@@ -867,7 +851,7 @@
                         <!-- Regulatory Framework Tag -->
                         <div class="text-xs text-teal-950 bg-teal-50 border border-teal-200 rounded-lg p-4 text-left leading-relaxed shadow-sm mt-4">
                             <strong class="block text-teal-900 font-bold mb-1">Statutory Standard Alignment Framework:</strong>
-                            <span class="text-slate-700">IMO MEPC.378(80) / PPR 13 Mandatory Framework / NORMAM-401 / ISO 20679 / AMPP Guide 21517-2025 / BEMA BRADD Data Framework Aligned</span>
+                            <span class="text-slate-700">IMO MEPC.378(80) Guidance / NORMAM-401 / ISO 20679 / AMPP Guide 21517-2025 / BEMA BRADD Data Framework</span>
                         </div>
                     </div>
                 </div>
@@ -989,7 +973,7 @@
                     </div>
                     <!-- Printable Warning Block -->
                     <div id="p-brazilPrintRisk" class="hidden p-3 border-2 border-red-400 bg-red-50 text-red-950 text-xs rounded">
-                        <strong>🚨 CRITICAL STATUTORY COMPLIANCE ALERT (NORMAM-401/DPC):</strong> Hull macrofouling rating equals or exceeds Rating 2. Vessel is prohibited from navigating between distinct biogeographic zones or entering Brazilian waters without executing localized in-water cleaning utilizing waste capture matrices. Prior authorization forms must be forwarded to the local maritime authority at least 10 days before operations.
+                        <strong>⚠️ BRAZILIAN BIOFOULING COMPLIANCE REVIEW (NORMAM-401/DPC):</strong> Rating 2 or higher has been recorded. If the vessel will enter Brazilian waters or cross Brazilian biogeographic regions, verify the current inspection and corrective-action requirements. Any in-water cleaning must comply with applicable authorization, advance-notice and waste-capture provisions; this notice does not itself determine entry eligibility.
                     </div>
                 </div>
                 <!-- SECTION 1 CONTENT ARRAY -->
@@ -1014,23 +998,7 @@
                                     <th class="p-2 border-b border-slate-300">Updated Parts</th>
                                 </tr>
                             </thead>
-                            <tbody id="p-revision-table-body">
-                                <tr>
-                                    <td class="p-2 border-b border-slate-200">2024-01-15</td>
-                                    <td class="p-2 border-b border-slate-200">Capt. J. Smith (DPA)</td>
-                                    <td class="p-2 border-b border-slate-200">Initial Document Creation</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2 border-b border-slate-200">2024-08-20</td>
-                                    <td class="p-2 border-b border-slate-200">Chief Officer M. Taylor</td>
-                                    <td class="p-2 border-b border-slate-200">Section 3 Coating System Updates</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2 border-b border-slate-200">2025-02-10</td>
-                                    <td class="p-2 border-b border-slate-200">Technical Superintendent R. Vance</td>
-                                    <td class="p-2 border-b border-slate-200">Post Dry-docking Review &amp; Niche Mapping</td>
-                                </tr>
-                            </tbody>
+                            <tbody id="p-revision-table-body"><tr><td colspan="3" class="p-2 text-center text-slate-400">No revisions recorded</td></tr></tbody>
                         </table>
                     </div>
                 </div>
@@ -1132,7 +1100,7 @@
                         </div>
                         <div class="border border-teal-300 rounded p-3 bg-teal-50/30">
                             <span class="block font-bold text-teal-950 uppercase mb-1">IMO Submissions Compliance Audit Summary (PPR 13 / MEPC.378(80)):</span>
-                            <p class="text-slate-700 text-[11px]">This Biofouling Management Plan aligns with the mandatory Goal-Based Standards framework (Norway PPR 13/5/2), Canada Control Points (PPR 13/5/6), ISO 20679 survey protocols, and Global TestNet MGPS efficacy testing standards (MEPC 83/INF.3). The installation of active acoustic/ultrasonic MGPS in critical niche areas fulfills continuous non-biocidal biofouling mitigation requirements, reducing fuel consumption penalties (PPR 12/INF.7) and mitigating toxic in-water cleaning effluent risks (PPR 13/INF.16).</p>
+                            <p class="text-slate-700 text-[11px]">This plan is structured with reference to the IMO 2023 Biofouling Guidelines (MEPC.378(80)), which are voluntary international guidance, and records information relevant to applicable local rules such as Brazil's NORMAM-401/DPC. Compliance, suitability and performance of each coating or MGPS depend on the equipment actually recorded, manufacturer instructions, verified inspections and the rules in force for the vessel's operations. A completed form does not replace statutory approvals or certificates.</p>
                         </div>
                     </div>
                 </div>
@@ -1334,6 +1302,11 @@
         const state = {
             inputs: {},
             checkboxes: {},
+            systemDrafts: {},
+            fileIndexes: {
+                afc: document.getElementById('p-afcAttachedFilesIndex').innerHTML,
+                mgps: document.getElementById('p-mgpsAttachedFilesIndex').innerHTML
+            },
             tables: {
                 afcForm: document.getElementById('afc-form-body').innerHTML,
                 afcPrint: document.getElementById('p-afc-table-body').innerHTML,
@@ -1358,6 +1331,10 @@
             const key = chk.id || (chk.className + '|' + chk.value);
             state.checkboxes[key] = chk.checked;
         });
+        // Preserve unsubmitted system entry drafts across reloads and project exports.
+        document.querySelectorAll('#panel-3 input:not([type="file"]):not([type="checkbox"]), #panel-3 select, #panel-3 textarea').forEach(el => {
+            if (el.id) state.systemDrafts[el.id] = el.value;
+        });
 
         localStorage.setItem('shipsonic_bfmp_state', JSON.stringify(state));
     }
@@ -1381,7 +1358,18 @@
                 if(el && state.inputs[id] !== undefined) el.value = state.inputs[id];
             });
 
+            // Backwards compatible: older saved projects have no systemDrafts key.
+            if (state.systemDrafts) {
+                Object.entries(state.systemDrafts).forEach(([id, value]) => {
+                    const el = document.getElementById(id);
+                    if (el && el.closest('#panel-3') && el.type !== 'file') el.value = value;
+                });
+            }
             toggleMgpsTypeOptions();
+            document.querySelectorAll('#panel-3 select[onchange^="toggleOtherInput"]').forEach(el => {
+                const match = el.getAttribute('onchange').match(/'([^']+)'\s*,\s*'([^']+)'/);
+                if (match) toggleOtherInput(match[1], match[2]);
+            });
             
             document.querySelectorAll('input[type="checkbox"]').forEach(chk => {
                 const key = chk.id || (chk.className + '|' + chk.value);
@@ -1390,6 +1378,10 @@
                 }
             });
 
+            if (state.fileIndexes) {
+                if (typeof state.fileIndexes.afc === 'string') document.getElementById('p-afcAttachedFilesIndex').innerHTML = state.fileIndexes.afc;
+                if (typeof state.fileIndexes.mgps === 'string') document.getElementById('p-mgpsAttachedFilesIndex').innerHTML = state.fileIndexes.mgps;
+            }
             if(state.tables) {
                 document.getElementById('afc-form-body').innerHTML = state.tables.afcForm;
                 document.getElementById('p-afc-table-body').innerHTML = state.tables.afcPrint;
@@ -1651,7 +1643,7 @@
                 iasDetail = `Vessel operating across ${trading} in ${climate} waters (${brazilZone}) with ${laytime} days laytime presents a high risk of translocating Invasive Aquatic Species (e.g., Sun Coral / Tubastraea, Asian Green Mussel, Barnacles) inside sheltered niche areas.`;
             } else {
                 iasLevel = "Elevated Cross-Regional Risk";
-                iasDetail = `Cross-regional voyages (${trading}) require continuous MGPS protection in sea chests and box coolers to prevent invasive larvae settlement.`;
+                iasDetail = `For cross-regional voyages (${trading}), review whether additional measures are needed for high-risk niche areas such as sea chests and box coolers.`;
             }
         } else {
             iasLevel = "Low / Domestic Baseline";
@@ -1662,16 +1654,16 @@
 
         // FUEL & PROPULSION PERFORMANCE PENALTY CALCULATION
         let fuelPenaltyText = "0% (Optimal Clean Hull)";
-        let advisoryText = "Hull and niche areas are currently at Rating 0. Maintain continuous Ultrasonic MGPS operation in box coolers and sea chests to preserve zero-fouling baseline.";
+        let advisoryText = "Hull and niche areas are currently at Rating 0. Maintain continuous MGPS operation, where fitted, and routine inspections to maintain a low-fouling baseline.";
         if (foulingScale.includes('Rating 1')) {
             fuelPenaltyText = "+8% to +15% Fuel / GHG Penalty";
             advisoryText = "BIMCO & IMO PPR 12/INF.7 studies demonstrate that even a 0.5mm microfouling slime layer (Rating 1) increases shaft power demand and GHG emissions by up to 15%. Proactive gentle grooming and active ultrasonic protection in cooling systems are advised.";
         } else if (foulingScale.includes('Rating 2')) {
             fuelPenaltyText = "+18% to +25% Fuel / GHG Penalty";
-            advisoryText = "Light Macrofouling (Rating 2) causes severe hydrodynamic drag and restricts heat transfer in box coolers. Under NORMAM-401 and IMO MEPC.378(80), reactive cleaning with capture is required. Installing Shipsonic Ultrasonic transducers prevents macrofouling settlement in sea chests and box coolers.";
+            advisoryText = "Light Macrofouling (Rating 2) causes severe hydrodynamic drag and restricts heat transfer in box coolers. Review applicable regional inspection and cleaning rules, including waste-capture requirements where relevant. Assess equipment and maintenance actions on the basis of recorded MGPS capability and manufacturer instructions.";
         } else if (foulingScale.includes('Rating 3') || foulingScale.includes('Rating 4')) {
             fuelPenaltyText = "+30% to +45% Critical Fuel Penalty";
-            advisoryText = "CRITICAL PERFORMANCE DEGRADATION: Heavy calcareous macrofouling (Rating 3–4) severely penalizes fuel consumption, risks engine overheating via blocked box coolers, and triggers port entry bans. Immediate haul-out or authorized closed-circuit cleaning + ultrasonic MGPS retrofit required.";
+            advisoryText = "CRITICAL PERFORMANCE DEGRADATION: Heavy calcareous macrofouling (Rating 3–4) severely penalizes fuel consumption, risks engine overheating via blocked box coolers, and may trigger regulatory restrictions depending on location. Prioritize inspection and evaluate authorized cleaning and protection measures appropriate to the vessel.";
         }
         const fuelSidebarEl = document.getElementById('sidebar-fuel-penalty');
         if (fuelSidebarEl) fuelSidebarEl.innerText = fuelPenaltyText;
@@ -1729,7 +1721,7 @@
         document.getElementById('r-iasDetailedText').innerText = iasDetail;
 
         document.getElementById('r-mappedNiches').innerText = checkedNiches.length > 0 ? checkedNiches.join(', ') : 'No niche areas selected yet.';
-        document.getElementById('r-unprotectedNiches').innerText = criticalNiches.length > 0 ? criticalNiches.join(', ') + ' — Immediate Ultrasonic MGPS protection recommended' : 'All selected critical niches have active MGPS coverage recorded.';
+        document.getElementById('r-unprotectedNiches').innerText = criticalNiches.length > 0 ? criticalNiches.join(', ') + ' — Review niche-area protection and inspection measures' : 'All selected critical niches have active MGPS coverage recorded.';
 
         let sysSummaryHTML = '';
         if (hasAFC) sysSummaryHTML += `<div><strong>• Hull Coating (AFC):</strong> ${afcTable.querySelectorAll('tr').length} active coating system(s) logged.</div>`;
@@ -1790,11 +1782,58 @@
     }
 
     // --- TABLE MANAGEMENT ---
+    function escapeRecordText(value) {
+        return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    }
+
+    function systemRecordSignature(kind) {
+        const firstId = kind === 'afc' ? 'afcCertificate' : 'mgpsManufacturerName';
+        const block = document.getElementById(firstId).closest('.rounded-xl');
+        const data = Array.from(block.querySelectorAll('input:not([type="file"]), select, textarea')).map(el =>
+            [el.id || el.value, el.type === 'checkbox' ? el.checked : el.value]);
+        return encodeURIComponent(JSON.stringify(data));
+    }
+
+    function hasPendingSystemRecord(kind) {
+        const body = document.getElementById(kind === 'afc' ? 'afc-form-body' : 'mgps-form-body');
+        const signature = systemRecordSignature(kind);
+        const rows = Array.from(body.querySelectorAll('tr'));
+        if (rows.some(row => row.dataset.recordSignature === signature)) return false;
+        // Old saved plans lack signatures: match identifying fields to avoid duplicating rows.
+        const oldRows = rows.filter(row => !row.dataset.recordSignature);
+        const ids = kind === 'afc' ? ['afcCertificate', 'afcCertNo'] : ['mgpsManufacturerName', 'mgpsModelName'];
+        const values = ids.map(id => document.getElementById(id).value.trim());
+        if (oldRows.some(row => values.every(value => !value || row.textContent.includes(value)))) return false;
+        return true;
+    }
+
+    function commitPendingSystemRecords() {
+        const coatingName = document.getElementById('afcCertificate').value.trim();
+        const coatingCert = document.getElementById('afcCertNo').value.trim();
+        if ((coatingName || coatingCert) && hasPendingSystemRecord('afc')) {
+            if (!coatingName || !coatingCert) {
+                alert('The pending coating needs both a name and certificate reference before PDF export. Complete it or clear the draft.');
+                return false;
+            }
+            addAfcRecord();
+        }
+        const mgpsMfr = document.getElementById('mgpsManufacturerName').value.trim();
+        const mgpsModel = document.getElementById('mgpsModelName').value.trim();
+        if ((mgpsMfr || mgpsModel) && hasPendingSystemRecord('mgps')) {
+            if (!mgpsMfr || !mgpsModel) {
+                alert('The pending MGPS entry needs both a manufacturer and model before PDF export. Complete it or clear the draft.');
+                return false;
+            }
+            addMgpsRecord();
+        }
+        return true;
+    }
+
     function handleAfcFiles(input) {
         const fileIndexEl = document.getElementById('p-afcAttachedFilesIndex');
         if(input.files && input.files.length > 0) {
             const names = Array.from(input.files).map(f => f.name);
-            fileIndexEl.innerHTML = `<ul class="list-disc list-inside space-y-0.5">${names.map(name => `<li>Attached Coating Spec Document: <strong>${name}</strong></li>`).join('')}</ul>`;
+            fileIndexEl.innerHTML = `<ul class="list-disc list-inside space-y-0.5">${names.map(name => `<li>Attached Coating Spec Document: <strong>${escapeRecordText(name)}</strong></li>`).join('')}</ul>`;
         } else {
             fileIndexEl.innerText = 'No files attached to record.';
         }
@@ -1863,12 +1902,12 @@
         
         if(!name || !cert) return alert('Fill core coating name and certificate reference');
         
-        const col1 = `<div><strong>Name:</strong> ${name}</div><div class="text-[11px] text-slate-500"><strong>Cert:</strong> ${cert}</div>`;
-        const col2 = `<div><strong>Class:</strong> ${classification}</div><div class="text-[11px] text-slate-500"><strong>Biocide:</strong> ${biocide}</div><div class="text-[10px] text-teal-900 mt-0.5"><strong>Areas:</strong> ${afcAreaStr}</div>`;
-        const col3 = `<div><strong>DFT:</strong> ${thickness}</div><div class="text-[11px] text-slate-500"><strong>Lifespan:</strong> ${lifespan}</div>`;
-        const col4 = `<div class="text-[11px]"><strong>Regimes:</strong> Rep: ${repair}, Maint: ${maintenance}, Ren: ${renewal}</div><div class="text-[10px] text-slate-500 mt-0.5"><strong>Clean:</strong> ${cleaningStr}</div>`;
+        const col1 = `<div><strong>Name:</strong> ${escapeRecordText(name)}</div><div class="text-[11px] text-slate-500"><strong>Cert:</strong> ${escapeRecordText(cert)}</div>`;
+        const col2 = `<div><strong>Class:</strong> ${escapeRecordText(classification)}</div><div class="text-[11px] text-slate-500"><strong>Biocide:</strong> ${escapeRecordText(biocide)}</div><div class="text-[10px] text-teal-900 mt-0.5"><strong>Areas:</strong> ${escapeRecordText(afcAreaStr)}</div>`;
+        const col3 = `<div><strong>DFT:</strong> ${escapeRecordText(thickness)}</div><div class="text-[11px] text-slate-500"><strong>Lifespan:</strong> ${escapeRecordText(lifespan)}</div>`;
+        const col4 = `<div class="text-[11px]"><strong>Regimes:</strong> Rep: ${escapeRecordText(repair)}, Maint: ${escapeRecordText(maintenance)}, Ren: ${escapeRecordText(renewal)}</div><div class="text-[10px] text-slate-500 mt-0.5"><strong>Clean:</strong> ${escapeRecordText(cleaningStr)}</div>`;
         
-        const row = `<tr>
+        const row = `<tr data-record-signature="${systemRecordSignature('afc')}">
             <td class="p-3 border-b border-slate-200">${col1}</td>
             <td class="p-3 border-b border-slate-200">${col2}</td>
             <td class="p-3 border-b border-slate-200">${col3}</td>
@@ -1893,8 +1932,14 @@
     }
 
     function removeAfcRow(btn) {
-        const rowIndex = btn.closest('tr').rowIndex - 1;
-        btn.closest('tr').remove();
+        const row = btn.closest('tr');
+        const rowIndex = row.rowIndex - 1;
+        // Do not silently re-add a deliberately removed row on the next PDF export.
+        if (row.dataset.recordSignature && row.dataset.recordSignature === systemRecordSignature('afc')) {
+            document.getElementById('afcCertificate').value = '';
+            document.getElementById('afcCertNo').value = '';
+        }
+        row.remove();
         const printBody = document.getElementById('p-afc-table-body');
         printBody.deleteRow(rowIndex);
         if(printBody.rows.length === 0) {
@@ -1907,7 +1952,7 @@
         const fileIndexEl = document.getElementById('p-mgpsAttachedFilesIndex');
         if(input.files && input.files.length > 0) {
             const names = Array.from(input.files).map(f => f.name);
-            fileIndexEl.innerHTML = `<ul class="list-disc list-inside space-y-0.5">${names.map(name => `<li>Attached System Spec Artifact: <strong>${name}</strong></li>`).join('')}</ul>`;
+            fileIndexEl.innerHTML = `<ul class="list-disc list-inside space-y-0.5">${names.map(name => `<li>Attached System Spec Artifact: <strong>${escapeRecordText(name)}</strong></li>`).join('')}</ul>`;
         } else {
             fileIndexEl.innerText = 'No files attached to record.';
         }
@@ -1920,7 +1965,7 @@
         let mgpsType = document.getElementById('mgpsTypeSelect').value;
         if (mgpsType === 'Other') {
             const spec = document.getElementById('mgpsTypeOther').value;
-            mgpsType = `Other (${spec || 'Unspecified'})`;
+            mgpsType = `Other (${escapeRecordText(spec || 'Unspecified')})`;
         }
         
         if (mgpsType.includes('Electrolytic')) {
@@ -1963,12 +2008,12 @@
             discharge = `Other (${spec || 'Unspecified'})`;
         }
         
-        const col1 = `<div><strong>Mfr:</strong> ${manufacturer}</div><div><strong>Model:</strong> ${model}</div><div class="text-[11px] text-slate-500"><strong>Type:</strong> ${mgpsType}</div>`;
-        const col2 = `<div><strong>Op:</strong> ${opCondStr}</div><div class="text-[10px] text-teal-900 mt-1"><strong>Areas:</strong> ${mgpsAreaStr}</div>`;
-        const col3 = `<div><strong>Life:</strong> ${serviceLife}</div><div class="text-[10px] text-slate-600 mt-1"><strong>Maint:</strong> ${maintStr}</div>`;
-        const col4 = `<div>${discharge}</div>`;
+        const col1 = `<div><strong>Mfr:</strong> ${escapeRecordText(manufacturer)}</div><div><strong>Model:</strong> ${escapeRecordText(model)}</div><div class="text-[11px] text-slate-500"><strong>Type:</strong> ${mgpsType}</div>`;
+        const col2 = `<div><strong>Op:</strong> ${escapeRecordText(opCondStr)}</div><div class="text-[10px] text-teal-900 mt-1"><strong>Areas:</strong> ${escapeRecordText(mgpsAreaStr)}</div>`;
+        const col3 = `<div><strong>Life:</strong> ${escapeRecordText(serviceLife)}</div><div class="text-[10px] text-slate-600 mt-1"><strong>Maint:</strong> ${escapeRecordText(maintStr)}</div>`;
+        const col4 = `<div>${escapeRecordText(discharge)}</div>`;
         
-        const row = `<tr>
+        const row = `<tr data-record-signature="${systemRecordSignature('mgps')}">
             <td class="p-3 border-b border-slate-200">${col1}</td>
             <td class="p-3 border-b border-slate-200">${col2}</td>
             <td class="p-3 border-b border-slate-200">${col3}</td>
@@ -1993,8 +2038,14 @@
     }
 
     function removeMgpsRow(btn) {
-        const rowIndex = btn.closest('tr').rowIndex - 1;
-        btn.closest('tr').remove();
+        const row = btn.closest('tr');
+        const rowIndex = row.rowIndex - 1;
+        // Do not silently re-add a deliberately removed row on the next PDF export.
+        if (row.dataset.recordSignature && row.dataset.recordSignature === systemRecordSignature('mgps')) {
+            document.getElementById('mgpsManufacturerName').value = '';
+            document.getElementById('mgpsModelName').value = '';
+        }
+        row.remove();
         const printBody = document.getElementById('p-mgps-table-body');
         printBody.deleteRow(rowIndex);
         if(printBody.rows.length === 0) {
@@ -2151,17 +2202,21 @@
     }
 
     function generateBFMPDocument() {
+        if (!commitPendingSystemRecords()) return;
         updateBindings();
         document.body.classList.remove('print-mode-risk');
         switchPreviewMode('bfmp');
+        saveState();
         sendSilentDiscordAlert('BFMP_PDF_PRINT');
         window.print();
     }
 
     function generateRiskPerformanceReport() {
+        if (!commitPendingSystemRecords()) return;
         updateBindings();
         document.body.classList.add('print-mode-risk');
         switchPreviewMode('risk');
+        saveState();
         sendSilentDiscordAlert('RISK_REPORT_PDF_PRINT');
         window.print();
     }
@@ -2194,7 +2249,10 @@
             domCache.previews[id] = document.getElementById('p-' + id);
         });
 
+        const hadSavedPlan = !!localStorage.getItem('shipsonic_bfmp_state');
         restoreState();
+        // Initialize the default MGPS maintenance choices consistently on a new plan.
+        if (!hadSavedPlan) toggleMgpsTypeOptions();
 
         document.getElementById('wizardForm').addEventListener('input', updateBindings);
         document.getElementById('wizardForm').addEventListener('change', updateBindings);
