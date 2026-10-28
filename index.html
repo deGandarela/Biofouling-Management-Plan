@@ -2304,29 +2304,66 @@
     };
     </script>
 
-    <script>
-    // Hide the main generator form by default
-    document.getElementById('wizardForm').style.display = 'none';
-    document.getElementById('sidebar-summary').style.display = 'none';
+   <script>
+    // 1. Grab the main app container so we can blur it
+    const appContainer = document.querySelector('.max-w-7xl');
+    
+    // 2. Create the centered lock overlay with a blurred backdrop
+    const lockedOverlay = document.createElement('div');
+    lockedOverlay.id = 'locked-overlay';
+    // 'backdrop-blur-md' blurs everything behind this overlay
+    lockedOverlay.className = 'fixed inset-0 z-50 flex items-center justify-center bg-slate-900/30 backdrop-blur-md transition-all duration-300';
+    
+    // The centered square
+    lockedOverlay.innerHTML = `
+        <div class="bg-white border border-slate-200 rounded-2xl p-10 shadow-2xl mx-4 max-w-sm w-full text-center">
+            <h2 class="text-2xl font-black text-teal-950 mb-2">🔒 Secure Access</h2>
+            <p class="text-slate-500 text-sm mb-6">Please sign in with your authorized Shipsonic account to unlock the generator.</p>
+            <button onclick="netlifyIdentity.open('login')" class="w-full bg-teal-800 hover:bg-teal-900 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-md">
+                Sign In
+            </button>
+        </div>
+    `;
+    document.body.appendChild(lockedOverlay);
 
-    // Check if user is already logged in on page load
-    if (netlifyIdentity.currentUser()) {
-        document.getElementById('wizardForm').style.display = 'block';
-        document.getElementById('sidebar-summary').style.display = 'block';
+    // 3. Function to toggle the UI based on login status
+    function updateUIForLogin(isLoggedIn) {
+        if (isLoggedIn) {
+            // Remove blur and restore functionality
+            appContainer.style.filter = 'none';
+            appContainer.style.pointerEvents = 'auto';
+            appContainer.style.userSelect = 'auto';
+            lockedOverlay.style.display = 'none';
+        } else {
+            // Apply blur and block clicking on the background app
+            appContainer.style.filter = 'blur(8px)';
+            appContainer.style.pointerEvents = 'none';
+            appContainer.style.userSelect = 'none';
+            lockedOverlay.style.display = 'flex';
+        }
     }
 
-    // Listen for login event
-    netlifyIdentity.on('login', user => {
-        document.getElementById('wizardForm').style.display = 'block';
-        document.getElementById('sidebar-summary').style.display = 'block';
-        netlifyIdentity.close(); // Close the popup
-    });
+    // 4. Default to locked state on page load
+    updateUIForLogin(false);
 
-    // Listen for logout event
-    netlifyIdentity.on('logout', () => {
-        document.getElementById('wizardForm').style.display = 'none';
-        document.getElementById('sidebar-summary').style.display = 'none';
-    });
+    // 5. Initialize Netlify Identity Logic
+    if (window.netlifyIdentity) {
+        // Check if user is already logged in
+        if (netlifyIdentity.currentUser()) {
+            updateUIForLogin(true);
+        }
+        
+        // Listen for user logging in
+        netlifyIdentity.on('login', user => {
+            updateUIForLogin(true);
+            netlifyIdentity.close(); // Automatically close the Netlify popup
+        });
+
+        // Listen for user logging out
+        netlifyIdentity.on('logout', () => {
+            updateUIForLogin(false);
+        });
+    }
 </script>
 </body>
 </html>
