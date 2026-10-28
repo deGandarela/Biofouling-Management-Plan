@@ -6,6 +6,8 @@
     <title>Biofouling Management Plan Generator</title>
     <!-- Tailwind CSS Engine CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    
     <style>
         @media print {
             /* Hide the entry form wizard, navigation, and buttons entirely */
@@ -66,6 +68,7 @@
                 <button type="button" onclick="document.getElementById('importFile').click();" class="bg-teal-100 hover:bg-teal-200 text-teal-900 border border-teal-300 text-sm font-semibold px-4 py-2 rounded-lg transition-colors shadow-sm no-print">
                     📂 Load Previous Plan
                 </button>
+            <div data-netlify-identity-menu></div>
             </div>
         </header>
 
@@ -2260,5 +2263,30 @@
         updateBindings();
     };
     </script>
+
+    <script>
+    // Hide the main generator form by default
+    document.getElementById('wizardForm').style.display = 'none';
+    document.getElementById('sidebar-summary').style.display = 'none';
+
+    // Check if user is already logged in on page load
+    if (netlifyIdentity.currentUser()) {
+        document.getElementById('wizardForm').style.display = 'block';
+        document.getElementById('sidebar-summary').style.display = 'block';
+    }
+
+    // Listen for login event
+    netlifyIdentity.on('login', user => {
+        document.getElementById('wizardForm').style.display = 'block';
+        document.getElementById('sidebar-summary').style.display = 'block';
+        netlifyIdentity.close(); // Close the popup
+    });
+
+    // Listen for logout event
+    netlifyIdentity.on('logout', () => {
+        document.getElementById('wizardForm').style.display = 'none';
+        document.getElementById('sidebar-summary').style.display = 'none';
+    });
+</script>
 </body>
 </html>
