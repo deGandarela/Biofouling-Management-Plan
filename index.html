@@ -45,6 +45,46 @@
             body:not(.print-mode-risk) #printable-document {
                 display: block !important;
             }
+
+            /* Style the Netlify Identity Menu Container */
+.netlify-identity-menu {
+    list-style: none !important;
+    display: flex !important;
+    gap: 0.5rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Style the default Login/Logout buttons (Teal Primary) */
+.netlify-identity-item a {
+    display: inline-flex !important;
+    align-items: center !important;
+    padding: 0.5rem 1rem !important;
+    background-color: #0f766e !important; /* Tailwind teal-700 */
+    color: white !important;
+    font-size: 0.875rem !important; /* text-sm */
+    font-weight: 600 !important; /* font-semibold */
+    border-radius: 0.5rem !important; /* rounded-lg */
+    text-decoration: none !important;
+    transition: background-color 0.2s !important;
+    cursor: pointer !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+.netlify-identity-item a:hover {
+    background-color: #115e59 !important; /* Tailwind teal-800 */
+}
+
+/* Make the Sign Up button look like a Secondary button (Light Gray) */
+.netlify-identity-signup {
+    background-color: #f8fafc !important; /* Tailwind slate-50 */
+    color: #334155 !important; /* Tailwind slate-700 */
+    border: 1px solid #cbd5e1 !important; /* border-slate-300 */
+}
+
+.netlify-identity-signup:hover {
+    background-color: #f1f5f9 !important; /* Tailwind slate-100 */
+}
         }
     </style>
 </head>
