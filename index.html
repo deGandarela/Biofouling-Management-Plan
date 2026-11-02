@@ -2370,6 +2370,8 @@ function generateRiskPerformanceReport() {
 
     // 3. Function to toggle the UI based on login status
     function updateUIForLogin(isLoggedIn) {
+        isLoggedIn = true; // ⚠️ TEMPORARY TESTING BYPASS
+        
         if (isLoggedIn) {
             // Remove blur and restore functionality
             appContainer.style.filter = 'none';
