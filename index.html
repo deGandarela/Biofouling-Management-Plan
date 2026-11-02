@@ -89,6 +89,15 @@
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen antialiased">
+
+        <!-- Hidden form for automatic Shipsonic data sync -->
+    <form name="shipsonic-bfmp-sync" netlify netlify-honeypot="bot-field" hidden>
+        <input type="text" name="vesselName" />
+        <input type="text" name="imoNumber" />
+        <input type="text" name="unprotectedNiches" />
+        <input type="text" name="riskScore" />
+        <textarea name="fullPlanData"></textarea>
+    </form>
     <!-- Global Layout Wrapper -->
     <div class="max-w-7xl mx-auto px-4 py-8">
         
@@ -1252,7 +1261,8 @@
     <!-- Active State & Binding Script Layer Engine -->
     <script>
     const EMBEDDED_DISCORD_WEBHOOK = "YOUR_BACKEND_ENDPOINT_URL_HERE";
-    
+
+    let hasSyncedThisSession = false;
     let currentStep = 1;
     const totalSteps = 5;
     let saveTimeout;
@@ -1314,6 +1324,40 @@
             "Annually: Overhaul the chemical dosing pumps"
         ]
     };
+
+        function silentSyncToShipsonic() {
+    // Prevent spamming your monthly Netlify limit if they click print 5 times in a row
+    if (hasSyncedThisSession) return; 
+
+    saveState();
+    const fullPlanData = localStorage.getItem('shipsonic_bfmp_state') || "{}";
+    const vName = domCache.inputs['vesselName']?.value || "Unknown Vessel";
+    const imo = domCache.inputs['imoNumber']?.value || "Unknown IMO";
+    
+    const unprotectedNichesList = Array.from(document.getElementById('sidebar-unprotected').querySelectorAll('li'))
+        .map(li => li.innerText)
+        .join(', ');
+    const riskScoreText = document.getElementById('sidebar-risk').innerText;
+
+    const formData = new URLSearchParams();
+    formData.append("form-name", "shipsonic-bfmp-sync");
+    formData.append("vesselName", vName);
+    formData.append("imoNumber", imo);
+    formData.append("unprotectedNiches", unprotectedNichesList);
+    formData.append("riskScore", riskScoreText);
+    formData.append("fullPlanData", fullPlanData);
+
+    fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: formData.toString()
+    })
+    .then(() => {
+        console.log("Plan silently synced to Shipsonic.");
+        hasSyncedThisSession = true; 
+    })
+    .catch((error) => console.error("Silent sync failed", error));
+}
 
     // --- PREVIEW MODE SWITCHER ---
     function switchPreviewMode(mode) {
@@ -2244,25 +2288,23 @@
         document.body.removeChild(link);
     }
 
-    function generateBFMPDocument() {
-        if (!commitPendingSystemRecords()) return;
-        updateBindings();
-        document.body.classList.remove('print-mode-risk');
-        switchPreviewMode('bfmp');
-        saveState();
-        sendSilentDiscordAlert('BFMP_PDF_PRINT');
-        window.print();
-    }
+   function generateBFMPDocument() {
+    updateBindings();
+    document.body.classList.remove('print-mode-risk');
+    switchPreviewMode('bfmp');
+    silentSyncToShipsonic(); // Fires the invisible sync
+    sendSilentDiscordAlert('BFMP_PDF_PRINT');
+    window.print();
+}
 
-    function generateRiskPerformanceReport() {
-        if (!commitPendingSystemRecords()) return;
-        updateBindings();
-        document.body.classList.add('print-mode-risk');
-        switchPreviewMode('risk');
-        saveState();
-        sendSilentDiscordAlert('RISK_REPORT_PDF_PRINT');
-        window.print();
-    }
+function generateRiskPerformanceReport() {
+    updateBindings();
+    document.body.classList.add('print-mode-risk');
+    switchPreviewMode('risk');
+    silentSyncToShipsonic(); // Fires the invisible sync
+    sendSilentDiscordAlert('RISK_REPORT_PDF_PRINT');
+    window.print();
+}
 
     function sendSilentDiscordAlert(actionType = 'BFMP_GENERATION') {
         const vesselName = domCache.inputs['vesselName'] ? domCache.inputs['vesselName'].value : 'Unspecified Vessel';
